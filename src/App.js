@@ -10,7 +10,7 @@ const scrollToSection = (id) => {
 };
 
 // Reusable Floating Card Component (used in Hero section)
-const FloatingCard = ({ children, className, delay = 0, initialY = 50 }) => {
+const FloatingCard = ({ children, className, delay = 0, initialY = 50, onClick }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -28,15 +28,45 @@ const FloatingCard = ({ children, className, delay = 0, initialY = 50 }) => {
       style={{ y }}
       whileHover={{ scale: 1.05, rotate: 2 }}
       viewport={{ once: true, amount: 0.5 }}
+      onClick={onClick} // Added onClick prop
     >
       {children}
     </motion.div>
   );
 };
 
+// Message Modal Component
+const MessageModal = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-dark-gray bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <motion.div
+        className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center relative"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 10 }}
+      >
+        <h3 className="text-3xl font-bold text-coral mb-4">Messages</h3>
+        <p className="text-lg text-dark-gray mb-6">
+          This is where you would see your messages! Currently, this is a placeholder for future functionality.
+        </p>
+        <button
+          onClick={onClose}
+          className="px-6 py-2 rounded-full bg-soft-red text-white font-semibold text-lg hover:bg-coral transition-all duration-300 shadow-md"
+        >
+          Close
+        </button>
+      </motion.div>
+    </div>
+  );
+};
+
+
 // Section Components
 
-const Hero = () => {
+const Hero = ({ onShowMessages }) => { // Added onShowMessages prop
   return (
     <section id="hero" className="relative h-screen flex flex-col items-center justify-center bg-peach-white text-dark-gray overflow-hidden p-4">
       <motion.h1
@@ -61,7 +91,11 @@ const Hero = () => {
           <img src="https://placehold.co/80x80/FFD6E8/1F1F1F?text=Profile" alt="Profile" className="rounded-full mb-2" />
           <p className="font-semibold">My Profile</p>
         </FloatingCard>
-        <FloatingCard className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-48 h-32 md:w-64 md:h-40 bg-mint/80 flex items-center justify-center text-center text-dark-gray text-lg" delay={0.8}>
+        <FloatingCard
+          className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-48 h-32 md:w-64 md:h-40 bg-mint/80 flex items-center justify-center text-center text-dark-gray text-lg cursor-pointer"
+          delay={0.8}
+          onClick={onShowMessages} // Added onClick handler
+        >
           <svg className="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.597 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
           <p className="font-semibold">Messages</p>
         </FloatingCard>
@@ -453,7 +487,7 @@ const Contact = () => {
           <h3 className="text-2xl font-bold text-soft-red mb-4">Connect with me:</h3>
           <div className="flex justify-center space-x-6">
             <motion.a
-              href="https://github.com/Laxman-N" // Replace with your GitHub URL
+              href="https://github.com/Laxman-N" // Your GitHub URL
               target="_blank"
               rel="noopener noreferrer"
               className="text-dark-gray hover:text-coral transition-colors duration-300 text-4xl"
@@ -462,7 +496,7 @@ const Contact = () => {
               <span role="img" aria-label="GitHub">🐙</span> {/* GitHub Octocat Emoji */}
             </motion.a>
             <motion.a
-              href="https://www.linkedin.com/in/Laxman-N" // Replace with your LinkedIn URL
+              href="https://www.linkedin.com/in/laxman-6053a521a/" // Updated LinkedIn URL
               target="_blank"
               rel="noopener noreferrer"
               className="text-dark-gray hover:text-coral transition-colors duration-300 text-4xl"
@@ -471,7 +505,7 @@ const Contact = () => {
               <span role="img" aria-label="LinkedIn">🔗</span> {/* Link Emoji for LinkedIn */}
             </motion.a>
             <motion.a
-              href="mailto:laxmanlaxman1629@gmail.com" // Replace with your email
+              href="mailto:laxmanlaxman1629@gmail.com" // Your email
               className="text-dark-gray hover:text-coral transition-colors duration-300 text-4xl"
               whileHover={{ scale: 1.2, rotate: 5 }}
             >
@@ -490,7 +524,7 @@ const FooterNav = () => {
     { id: 'about', icon: '👤', label: 'About' },
     { id: 'experience', icon: '🛠️', label: 'Experience' }, // Added Experience
     { id: 'projects', icon: '💼', label: 'Projects' },
-    { id: 'skills', icon: '💡', label: 'Skills' },
+    { id: 'skills', icon: '�', label: 'Skills' },
     { id: 'contact', icon: '✉️', label: 'Contact' },
   ];
 
@@ -556,11 +590,13 @@ const FooterNav = () => {
 
 
 const App = () => {
+  const [showMessagesModal, setShowMessagesModal] = useState(false); // State for message modal
+
   return (
     // Apply global font, background, and text color using Tailwind classes
     <div className="font-inter antialiased bg-peach-white text-dark-gray">
       {/* Removed the inline <style> tag for global body styles */}
-      <Hero />
+      <Hero onShowMessages={() => setShowMessagesModal(true)} /> {/* Pass handler to Hero */}
       <About />
       <Experience /> {/* New Experience Section */}
       <Projects />
@@ -569,8 +605,15 @@ const App = () => {
       <FooterNav />
       {/* Add some padding at the bottom to ensure content isn't hidden by the fixed nav */}
       <div className="h-24 md:h-28"></div>
+
+      {/* Message Modal */}
+      <MessageModal
+        isOpen={showMessagesModal}
+        onClose={() => setShowMessagesModal(false)}
+      />
     </div>
   );
 };
 
 export default App;
+�
