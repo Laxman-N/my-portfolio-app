@@ -524,7 +524,7 @@ const FooterNav = () => {
     { id: 'about', icon: '👤', label: 'About' },
     { id: 'experience', icon: '🛠️', label: 'Experience' }, // Added Experience
     { id: 'projects', icon: '💼', label: 'Projects' },
-    { id: 'skills', icon: '�', label: 'Skills' },
+    { id: 'skills', icon: '💡', label: 'Skills' }, // Corrected emoji for Skills
     { id: 'contact', icon: '✉️', label: 'Contact' },
   ];
 
@@ -616,4 +616,3 @@ const App = () => {
 };
 
 export default App;
-�
